@@ -1,0 +1,2 @@
+# shikimori
+Shikimori-bot
