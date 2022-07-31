@@ -1,24 +1,28 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
-	"net/http"
+	"math/rand"
 	"os"
 	"os/signal"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 var (
-	Token string
+	Token    string
+	tags     [7]string = [7]string{"!panda", "!anime", "!banwords", "!rules", "!links", "!pinned", "!tags"}
+	banwords [7]string = [7]string{"трап", "3D", "бля", "блять", "хуй", "далбаеб", "хуйня"}
+	images             = []string{"akame-shocked.gif", "akame-sword.gif", "cringe.png", "moe.gif", "nisekoi-chitoge.gif", "nisekoi-smug.gif"}
+	links              = []string{"1)Тянки: https://drive.google.com/drive/folders/11lVHBFXhiLU5hlbwJSaiLX5Bb29dKi79?usp=sharing", "2)Оверлорд: https://drive.google.com/drive/folders/1aTlH2yxAZpiwsVv08a88ejH9JbuSBhpZ?usp=sharing"}
 )
 
-const KuteGoAPIURL = "https://github.com/scraly/gophers"
+const ContentURl = "https://github.com/Yuno-obsessed/shikimori/blob/main/images/"
+const ImageURL = "https://raw.githubusercontent.com/Yuno-obsessed/shikimori/main/images/"
 
 func init() {
 	flag.StringVar(&Token, "t", "", "Bot Token")
@@ -47,7 +51,7 @@ func main() {
 	}
 
 	// Wait here until CTRL-C or other term signal is received.
-	fmt.Println("Bot is now running. Press CTRL-C to exit.")
+	fmt.Println("Shikimori is ready for her job.")
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
@@ -56,94 +60,69 @@ func main() {
 	dg.Close()
 }
 
-type Gopher struct {
+type Shiki struct {
 	Name string `json: "name"`
 }
 
-// This function will be called (due to AddHandler above) every time a new
-// message is created on any channel that the authenticated bot has access to.
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
-	// Ignore all messages created by the bot itself
-	// This isn't required in this specific example but it's a good practice.
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
-
-	if m.Content == "!gopher" {
-
-		//Call the KuteGo API and retrieve our cute Dr Who Gopher
-		response, err := http.Get(KuteGoAPIURL)
+	err := s.UpdateGameStatus(0, "Your waifu")
+	if err != nil {
+		fmt.Println(err)
+	}
+	rand.Seed(time.Now().Unix())
+	var n int
+	for n = 0; n < len(banwords); n++ {
+		if strings.Contains(m.Content, banwords[n]) {
+			_, err := s.ChannelMessageSend(m.ChannelID, ImageURL+images[rand.Intn(len(images))])
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
+	}
+	if strings.Contains(m.Content, "как ") || strings.Contains(m.Content, "Как ") || strings.Contains(m.Content, "Каким образом") {
+		_, err := s.ChannelMessageSend(m.ChannelID, ImageURL+"how-to.jpg")
 		if err != nil {
 			fmt.Println(err)
 		}
-		defer response.Body.Close()
-
-		if response.StatusCode == 200 {
-			_, err = s.ChannelFileSend(m.ChannelID, "dr-who.png", response.Body)
-			if err != nil {
-				fmt.Println(err)
-			}
-		} else {
-			fmt.Println("Error: Can't get dr-who Gopher! :-(")
-		}
-	}
-
-	if m.Content == "!random" {
-
-		//Call the KuteGo API and retrieve a random Gopher
-		response, err := http.Get(KuteGoAPIURL + "/gopher/random/")
+	} else if m.Content == tags[0] {
+		_, err := s.ChannelMessageSend(m.ChannelID, "https://tenor.com/view/gfg-gif-22720654")
 		if err != nil {
 			fmt.Println(err)
 		}
-		defer response.Body.Close()
-
-		if response.StatusCode == 200 {
-			_, err = s.ChannelFileSend(m.ChannelID, "random-gopher.png", response.Body)
-			if err != nil {
-				fmt.Println(err)
-			}
-		} else {
-			fmt.Println("Error: Can't get random Gopher! :-(")
+	} else if m.Content == tags[1] {
+		//have to group anime links and randomize their output
+	} else if m.Content == tags[2] {
+		var banwordies string
+		for n = 0; n < len(banwords); n++ {
+			banwordies += banwords[n] + ", "
 		}
-	}
-
-	if m.Content == "!gophers" {
-
-		//Call the KuteGo API and display the list of available Gophers
-		response, err := http.Get(KuteGoAPIURL + "/gophers/")
+		_, err := s.ChannelMessageSend(m.ChannelID, banwordies)
 		if err != nil {
 			fmt.Println(err)
 		}
-		defer response.Body.Close()
-
-		if response.StatusCode == 200 {
-			// Transform our response to a []byte
-			body, err := ioutil.ReadAll(response.Body)
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			// Put only needed informations of the JSON document in our array of Gopher
-			var data []Gopher
-			err = json.Unmarshal(body, &data)
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			// Create a string with all of the Gopher's name and a blank line as separator
-			var gophers strings.Builder
-			for _, gopher := range data {
-				gophers.WriteString(gopher.Name + "\n")
-			}
-
-			// Send a text message with the list of Gophers
-			_, err = s.ChannelMessageSend(m.ChannelID, gophers.String())
-			if err != nil {
-				fmt.Println(err)
-			}
-		} else {
-			fmt.Println("Error: Can't get list of Gophers! :-(")
+	} else if m.Content == tags[4] {
+		_, err := s.ChannelMessageSend(m.ChannelID, links[0]+"\n"+links[1])
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else if m.Content == tags[5] {
+		_, err := s.ChannelMessagesPinned(m.ChannelID)
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else if m.Content == tags[6] {
+		var taggies string
+		for n = 0; n < len(tags); n++ {
+			taggies += tags[n] + ", "
+		}
+		_, err := s.ChannelMessageSend(m.ChannelID, taggies)
+		if err != nil {
+			fmt.Println(err)
 		}
 	}
+
 }
