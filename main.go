@@ -104,10 +104,6 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if err != nil {
 			fmt.Println(err)
 		}
-		//_, err := s.ChannelFileSend()
-		//if err != nil {
-		//	fmt.Println(err)
-		//}
 		//have to group anime links and randomize their output
 	} else if m.Content == tags[2] {
 		var banwordies string
