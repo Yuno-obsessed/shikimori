@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"flag"
 	"fmt"
 	"math/rand"
@@ -94,13 +93,13 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			fmt.Println(err)
 		}
 	} else if m.Content == tags[1] {
-		var filenames = []string{"moe.gif", "akame-sword.gif", "cringe.png"}
-		file, err := os.Open("~/images/anime/" + filenames[rand.Intn(len(filenames))])
-		if err != nil {
-			fmt.Println(err)
-		}
-		r := bufio.NewReader(file)
-		_, err = s.ChannelFileSend(m.ChannelID, "~/images/anime/"+filenames[rand.Intn(len(filenames))], r)
+		//var filenames = []string{"moe.gif", "akame-sword.gif", "cringe.png"}
+		//file, err := os.Open("~/images/anime/" + filenames[rand.Intn(len(filenames))])
+		//if err != nil {
+		//	fmt.Println(err)
+		//}
+		//r := bufio.NewReader(file)
+		_, err = s.ChannelMessageSend(m.ChannelID, "Иди нахуй дрочер!")
 		if err != nil {
 			fmt.Println(err)
 		}
