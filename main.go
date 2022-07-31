@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"math/rand"
@@ -15,13 +16,12 @@ import (
 
 var (
 	Token    string
-	tags     [7]string = [7]string{"!panda", "!anime", "!banwords", "!rules", "!links", "!pinned", "!tags"}
-	banwords [7]string = [7]string{"трап", "3D", "бля", "блять", "хуй", "далбаеб", "хуйня"}
-	images             = []string{"akame-shocked.gif", "akame-sword.gif", "cringe.png", "moe.gif", "nisekoi-chitoge.gif", "nisekoi-smug.gif"}
-	links              = []string{"1)Тянки: https://drive.google.com/drive/folders/11lVHBFXhiLU5hlbwJSaiLX5Bb29dKi79?usp=sharing", "2)Оверлорд: https://drive.google.com/drive/folders/1aTlH2yxAZpiwsVv08a88ejH9JbuSBhpZ?usp=sharing"}
+	tags     = []string{"!panda", "!anime", "!banwords", "!rules", "!links", "!pinned", "!tags"}
+	banwords = []string{"трап", "3D", "бля", "блять", "хуй", "далбаеб", "хуйня"}
+	images   = []string{"akame-shocked.gif", "akame-sword.gif", "cringe.png", "moe.gif", "nisekoi-chitoge.gif", "nisekoi-smug.gif"}
+	links    = []string{"1)Тянки: https://drive.google.com/drive/folders/11lVHBFXhiLU5hlbwJSaiLX5Bb29dKi79?usp=sharing", "2)Оверлорд: https://drive.google.com/drive/folders/1aTlH2yxAZpiwsVv08a88ejH9JbuSBhpZ?usp=sharing"}
 )
 
-const ContentURl = "https://github.com/Yuno-obsessed/shikimori/blob/main/images/"
 const ImageURL = "https://raw.githubusercontent.com/Yuno-obsessed/shikimori/main/images/"
 
 func init() {
@@ -94,6 +94,20 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			fmt.Println(err)
 		}
 	} else if m.Content == tags[1] {
+		var filenames = []string{"moe.gif", "akame-sword.gif", "cringe.png"}
+		file, err := os.Open("~/images/anime/" + filenames[rand.Intn(len(filenames))])
+		if err != nil {
+			fmt.Println(err)
+		}
+		r := bufio.NewReader(file)
+		_, err = s.ChannelFileSend(m.ChannelID, "~/images/anime/"+filenames[rand.Intn(len(filenames))], r)
+		if err != nil {
+			fmt.Println(err)
+		}
+		//_, err := s.ChannelFileSend()
+		//if err != nil {
+		//	fmt.Println(err)
+		//}
 		//have to group anime links and randomize their output
 	} else if m.Content == tags[2] {
 		var banwordies string
