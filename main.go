@@ -15,9 +15,9 @@ import (
 var (
 	Token    string
 	tags     = []string{"!panda", "!anime", "!banwords", "!rules", "!links", "!pinned", "!tags", "ответ неврита", "ответ токсика"}
-	banwords = []string{"трап", "3D", "бля", "блять", "хуй", "далбаеб", "хуйня"}
+	banwords = []string{"трап", "рфаб", "ванилла", "хуй", "далбаеб", "хуйня"}
 	images   = []string{"akame-shocked.gif", "akame-sword.gif", "cringe.png", "moe.gif", "nisekoi-chitoge.gif", "nisekoi-smug.gif"}
-	links    = []string{"1)Полезная инфа: https://discord.com/channels/825185921359413278/825197106460753941/1005026874977693748", "2)Таблица: https://docs.google.com/spreadsheets/d/1XsKJBINxQxzXa2TtUoSLqt1Kp0-03Sz2tZ65PlJY94M/edit#gid=1846372233", "2)Видос о сборке: https://youtu.be/g-dUqkDT6wQ"}
+	links    = []string{"1)Полезная инфа: https://discord.com/channels/825185921359413278/825197106460753941/1005026874977693748", "2)Таблица: https://docs.google.com/spreadsheets/d/1XsKJBINxQxzXa2TtUoSLqt1Kp0-03Sz2tZ65PlJY94M/edit#gid=1846372233", "3)Видос о сборке: https://youtu.be/g-dUqkDT6wQ"}
 )
 
 const ImageURL = "https://raw.githubusercontent.com/Yuno-obsessed/shikimori/main/images/"
@@ -27,8 +27,6 @@ func init() {
 	Token = string(file)
 	if err != nil {
 		fmt.Println(err)
-	} else {
-		fmt.Println(Token)
 	}
 }
 func main() {
@@ -99,12 +97,6 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 				fmt.Println(err)
 			}
 		} else if m.Content == tags[1] {
-			//var filenames = []string{"moe.gif", "akame-sword.gif", "cringe.png"}
-			//file, err := os.Open("~/images/anime/" + filenames[rand.Intn(len(filenames))])
-			//if err != nil {
-			//	fmt.Println(err)
-			//}
-			//r := bufio.NewReader(file)
 			_, err = s.ChannelMessageSend(m.ChannelID, "Иди нахуй дрочер!")
 			if err != nil {
 				fmt.Println(err)
