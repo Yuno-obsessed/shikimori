@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"math/rand"
 	"os"
@@ -15,17 +14,22 @@ import (
 
 var (
 	Token    string
-	tags     = []string{"!panda", "!anime", "!banwords", "!rules", "!links", "!pinned", "!tags"}
+	tags     = []string{"!panda", "!anime", "!banwords", "!rules", "!links", "!pinned", "!tags", "ответ неврита", "ответ токсика"}
 	banwords = []string{"трап", "3D", "бля", "блять", "хуй", "далбаеб", "хуйня"}
 	images   = []string{"akame-shocked.gif", "akame-sword.gif", "cringe.png", "moe.gif", "nisekoi-chitoge.gif", "nisekoi-smug.gif"}
-	links    = []string{"1)Тянки: https://drive.google.com/drive/folders/11lVHBFXhiLU5hlbwJSaiLX5Bb29dKi79?usp=sharing", "2)Оверлорд: https://drive.google.com/drive/folders/1aTlH2yxAZpiwsVv08a88ejH9JbuSBhpZ?usp=sharing"}
+	links    = []string{"1)Полезная инфа: https://discord.com/channels/825185921359413278/825197106460753941/1005026874977693748", "2)Таблица: https://docs.google.com/spreadsheets/d/1XsKJBINxQxzXa2TtUoSLqt1Kp0-03Sz2tZ65PlJY94M/edit#gid=1846372233", "2)Видос о сборке: https://youtu.be/g-dUqkDT6wQ"}
 )
 
 const ImageURL = "https://raw.githubusercontent.com/Yuno-obsessed/shikimori/main/images/"
 
 func init() {
-	flag.StringVar(&Token, "t", "", "Bot Token")
-	flag.Parse()
+	file, err := os.ReadFile("token.txt")
+	Token = string(file)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(Token)
+	}
 }
 func main() {
 
@@ -65,73 +69,85 @@ type Shiki struct {
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
-	if m.Author.ID == s.State.User.ID {
-		return
-	}
-	err := s.UpdateGameStatus(0, "Your waifu")
-	if err != nil {
-		fmt.Println(err)
-	}
-	rand.Seed(time.Now().Unix())
-	var n int
-	for n = 0; n < len(banwords); n++ {
-		if strings.Contains(m.Content, banwords[n]) {
-			_, err := s.ChannelMessageSend(m.ChannelID, ImageURL+images[rand.Intn(len(images))])
+	if m.ChannelID == "1000850818976727072" {
+
+		if m.Author.ID == s.State.User.ID {
+			return
+		}
+		err := s.UpdateGameStatus(0, "Your waifu")
+		if err != nil {
+			fmt.Println(err)
+		}
+		rand.Seed(time.Now().Unix())
+		var n int
+		for n = 0; n < len(banwords); n++ {
+			if strings.Contains(m.Content, banwords[n]) {
+				_, err := s.ChannelMessageSend(m.ChannelID, ImageURL+images[rand.Intn(len(images))])
+				if err != nil {
+					fmt.Println(err)
+				}
+			}
+		}
+		if strings.Contains(m.Content, "как ") || strings.Contains(m.Content, "Как ") || strings.Contains(m.Content, "Каким образом") {
+			_, err := s.ChannelMessageSend(m.ChannelID, ImageURL+"how-to.jpg")
+			if err != nil {
+				fmt.Println(err)
+			}
+		} else if m.Content == tags[0] {
+			_, err := s.ChannelMessageSend(m.ChannelID, "https://tenor.com/view/gfg-gif-22720654")
+			if err != nil {
+				fmt.Println(err)
+			}
+		} else if m.Content == tags[1] {
+			//var filenames = []string{"moe.gif", "akame-sword.gif", "cringe.png"}
+			//file, err := os.Open("~/images/anime/" + filenames[rand.Intn(len(filenames))])
+			//if err != nil {
+			//	fmt.Println(err)
+			//}
+			//r := bufio.NewReader(file)
+			_, err = s.ChannelMessageSend(m.ChannelID, "Иди нахуй дрочер!")
+			if err != nil {
+				fmt.Println(err)
+			}
+			//have to group anime links and randomize their output!
+		} else if m.Content == tags[2] {
+			var banwordies string
+			for n = 0; n < len(banwords); n++ {
+				banwordies += banwords[n] + ", "
+			}
+			_, err := s.ChannelMessageSend(m.ChannelID, banwordies)
+			if err != nil {
+				fmt.Println(err)
+			}
+		} else if m.Content == tags[4] {
+			_, err := s.ChannelMessageSend(m.ChannelID, links[0]+"\n"+links[1])
+			if err != nil {
+				fmt.Println(err)
+			}
+		} else if m.Content == tags[5] {
+			_, err := s.ChannelMessagesPinned(m.ChannelID)
+			if err != nil {
+				fmt.Println(err)
+			}
+		} else if m.Content == tags[6] {
+			var taggies string
+			for n = 0; n < len(tags); n++ {
+				taggies += tags[n] + ", "
+			}
+			_, err := s.ChannelMessageSend(m.ChannelID, taggies)
+			if err != nil {
+				fmt.Println(err)
+			}
+		} else if m.Content == tags[7] {
+			_, err := s.ChannelMessageSend(m.ChannelID, ImageURL+"ответ_неврита.png")
+			if err != nil {
+				fmt.Println(err)
+			}
+		} else if m.Content == tags[8] {
+			_, err := s.ChannelMessageSend(m.ChannelID, ImageURL+"ответ_токсика.jpg")
 			if err != nil {
 				fmt.Println(err)
 			}
 		}
 	}
-	if strings.Contains(m.Content, "как ") || strings.Contains(m.Content, "Как ") || strings.Contains(m.Content, "Каким образом") {
-		_, err := s.ChannelMessageSend(m.ChannelID, ImageURL+"how-to.jpg")
-		if err != nil {
-			fmt.Println(err)
-		}
-	} else if m.Content == tags[0] {
-		_, err := s.ChannelMessageSend(m.ChannelID, "https://tenor.com/view/gfg-gif-22720654")
-		if err != nil {
-			fmt.Println(err)
-		}
-	} else if m.Content == tags[1] {
-		//var filenames = []string{"moe.gif", "akame-sword.gif", "cringe.png"}
-		//file, err := os.Open("~/images/anime/" + filenames[rand.Intn(len(filenames))])
-		//if err != nil {
-		//	fmt.Println(err)
-		//}
-		//r := bufio.NewReader(file)
-		_, err = s.ChannelMessageSend(m.ChannelID, "Иди нахуй дрочер!")
-		if err != nil {
-			fmt.Println(err)
-		}
-		//have to group anime links and randomize their output!
-	} else if m.Content == tags[2] {
-		var banwordies string
-		for n = 0; n < len(banwords); n++ {
-			banwordies += banwords[n] + ", "
-		}
-		_, err := s.ChannelMessageSend(m.ChannelID, banwordies)
-		if err != nil {
-			fmt.Println(err)
-		}
-	} else if m.Content == tags[4] {
-		_, err := s.ChannelMessageSend(m.ChannelID, links[0]+"\n"+links[1])
-		if err != nil {
-			fmt.Println(err)
-		}
-	} else if m.Content == tags[5] {
-		_, err := s.ChannelMessagesPinned(m.ChannelID)
-		if err != nil {
-			fmt.Println(err)
-		}
-	} else if m.Content == tags[6] {
-		var taggies string
-		for n = 0; n < len(tags); n++ {
-			taggies += tags[n] + ", "
-		}
-		_, err := s.ChannelMessageSend(m.ChannelID, taggies)
-		if err != nil {
-			fmt.Println(err)
-		}
-	}
-
 }
