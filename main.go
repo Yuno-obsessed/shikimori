@@ -15,7 +15,7 @@ import (
 var (
 	Token    string
 	tags     = []string{"!panda", "!anime", "!banwords", "!rules", "!links", "!pinned", "!tags", "ответ неврита", "ответ токсика"}
-	banwords = []string{"трап", "рфаб", "ванилла", "хуй", "далбаеб", "хуйня"}
+	banwords = []string{"трап", "рфаб", "ванилла", "ваниль", "хуй", "далбаеб", "хуйня"}
 	images   = []string{"akame-shocked.gif", "akame-sword.gif", "cringe.png", "moe.gif", "nisekoi-chitoge.gif", "nisekoi-smug.gif"}
 	links    = []string{"1)Полезная инфа: https://discord.com/channels/825185921359413278/825197106460753941/1005026874977693748", "2)Таблица: https://docs.google.com/spreadsheets/d/1XsKJBINxQxzXa2TtUoSLqt1Kp0-03Sz2tZ65PlJY94M/edit#gid=1846372233", "3)Видос о сборке: https://youtu.be/g-dUqkDT6wQ"}
 )
@@ -67,7 +67,7 @@ type Shiki struct {
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
-	if m.ChannelID == "1000850818976727072" {
+	if m.ChannelID == "827608911020163102" {
 
 		if m.Author.ID == s.State.User.ID {
 			return
