@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"os"
 	"os/signal"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -12,12 +13,15 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+// TODO: make !tags output look good,make newrite,felya,ch1h,warealdok tags, make wolves tag and gameplay
 var (
-	Token    string
-	tags     = []string{"!panda", "!anime", "!banwords", "!rules", "!links", "!pinned", "!tags", "ответ неврита", "ответ токсика"}
-	banwords = []string{"трап", "рфаб", "ванилла", "ваниль", "хуй", "далбаеб", "хуйня"}
-	images   = []string{"akame-shocked.gif", "akame-sword.gif", "cringe.png", "moe.gif", "nisekoi-chitoge.gif", "nisekoi-smug.gif"}
-	links    = []string{"1)Полезная инфа: https://discord.com/channels/825185921359413278/825197106460753941/1005026874977693748", "2)Таблица: https://docs.google.com/spreadsheets/d/1XsKJBINxQxzXa2TtUoSLqt1Kp0-03Sz2tZ65PlJY94M/edit#gid=1846372233", "3)Видос о сборке: https://youtu.be/g-dUqkDT6wQ"}
+	Token     string
+	tags      = []string{"!panda", "!anime", "!ch1h", "!felya", "!newrite", "!warealdok", "!auf", "!links", "!tags"}
+	links     = []string{"1)Полезная инфа: <https://discord.com/channels/825185921359413278/825197106460753941/1005026874977693748>", "2)Таблица: <https://docs.google.com/spreadsheets/d/1XsKJBINxQxzXa2TtUoSLqt1Kp0-03Sz2tZ65PlJY94M/edit#gid=1846372233>", "3)Видос о сборке: <https://youtu.be/g-dUqkDT6wQ>"}
+	warealdok = []string{"warealdok_1.png", "warealdok_2.png", "warealdok_3.png", "warealdok_4.png", "warealdok_5.png", "warealdok_6.png", "warealdok_7.png", "warealdok_8.png", "warealdok_9.png", "warealdok_10.png", "warealdok_11.png"}
+	ch1h      = []string{"ch1h_1.png", "ch1h_2.png", "ch1h_3.jpg"}
+	felya     = []string{"felya_1.jpg", "felya_2.jpg", "felya_3.png"}
+	newrite   = []string{"newrite_1.png", "newrite_2.png", "newrite_3.png", "newrite_4.png", "newrite_5.png", "newrite_6.png"}
 )
 
 const ImageURL = "https://raw.githubusercontent.com/Yuno-obsessed/shikimori/main/images/"
@@ -67,79 +71,74 @@ type Shiki struct {
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
-	if m.ChannelID == "827608911020163102" {
+	//if m.ChannelID == "827608911020163102" {
 
-		if m.Author.ID == s.State.User.ID {
-			return
-		}
-		err := s.UpdateGameStatus(0, "Your waifu")
+	if m.Author.ID == s.State.User.ID {
+		return
+	}
+
+	err := s.UpdateGameStatus(0, "Waifuborn")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	rand.Seed(time.Now().Unix())
+	m.Content = strings.ToLower(m.Content)
+
+	if strings.Contains(m.Content, "как играть за ") {
+		_, err := s.ChannelMessageSend(m.ChannelID, ImageURL+"gameplay.png")
 		if err != nil {
 			fmt.Println(err)
 		}
-		rand.Seed(time.Now().Unix())
-		var n int
-		for n = 0; n < len(banwords); n++ {
-			if strings.Contains(m.Content, banwords[n]) {
-				_, err := s.ChannelMessageSend(m.ChannelID, ImageURL+images[rand.Intn(len(images))])
-				if err != nil {
-					fmt.Println(err)
-				}
-			}
+	} else if m.Content == tags[0] {
+		_, err := s.ChannelMessageSend(m.ChannelID, "https://tenor.com/view/gfg-gif-22720654")
+		if err != nil {
+			fmt.Println(err)
 		}
-		if strings.Contains(m.Content, "как ") || strings.Contains(m.Content, "Как ") || strings.Contains(m.Content, "Каким образом") {
-			_, err := s.ChannelMessageSend(m.ChannelID, ImageURL+"how-to.jpg")
-			if err != nil {
-				fmt.Println(err)
-			}
-		} else if m.Content == tags[0] {
-			_, err := s.ChannelMessageSend(m.ChannelID, "https://tenor.com/view/gfg-gif-22720654")
-			if err != nil {
-				fmt.Println(err)
-			}
-		} else if m.Content == tags[1] {
-			_, err = s.ChannelMessageSend(m.ChannelID, "Иди нахуй дрочер!")
-			if err != nil {
-				fmt.Println(err)
-			}
-			//have to group anime links and randomize their output!
-		} else if m.Content == tags[2] {
-			var banwordies string
-			for n = 0; n < len(banwords); n++ {
-				banwordies += banwords[n] + ", "
-			}
-			_, err := s.ChannelMessageSend(m.ChannelID, banwordies)
-			if err != nil {
-				fmt.Println(err)
-			}
-		} else if m.Content == tags[4] {
-			_, err := s.ChannelMessageSend(m.ChannelID, links[0]+"\n"+links[1])
-			if err != nil {
-				fmt.Println(err)
-			}
-		} else if m.Content == tags[5] {
-			_, err := s.ChannelMessagesPinned(m.ChannelID)
-			if err != nil {
-				fmt.Println(err)
-			}
-		} else if m.Content == tags[6] {
-			var taggies string
-			for n = 0; n < len(tags); n++ {
-				taggies += tags[n] + ", "
-			}
-			_, err := s.ChannelMessageSend(m.ChannelID, taggies)
-			if err != nil {
-				fmt.Println(err)
-			}
-		} else if m.Content == tags[7] {
-			_, err := s.ChannelMessageSend(m.ChannelID, ImageURL+"ответ_неврита.png")
-			if err != nil {
-				fmt.Println(err)
-			}
-		} else if m.Content == tags[8] {
-			_, err := s.ChannelMessageSend(m.ChannelID, ImageURL+"ответ_токсика.jpg")
-			if err != nil {
-				fmt.Println(err)
-			}
+	} else if m.Content == tags[1] {
+		_, err = s.ChannelMessageSend(m.ChannelID, "Иди нахуй дрочер!")
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else if m.Content == tags[2] {
+		_, err = s.ChannelMessageSend(m.ChannelID, ImageURL+"/ch1h/"+ch1h[rand.Intn(len(ch1h))])
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else if m.Content == tags[3] {
+		_, err = s.ChannelMessageSend(m.ChannelID, ImageURL+"/felya/"+felya[rand.Intn(len(felya))])
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else if m.Content == tags[4] {
+		_, err = s.ChannelMessageSend(m.ChannelID, ImageURL+"/newrite/"+newrite[rand.Intn(len(newrite))])
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else if m.Content == tags[5] {
+		_, err = s.ChannelMessageSend(m.ChannelID, ImageURL+"/warealdok/"+warealdok[rand.Intn(len(warealdok))])
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else if m.Content == tags[6] {
+		_, err = s.ChannelMessageSend(m.ChannelID, ImageURL+"auf.png")
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else if m.Content == tags[7] {
+		_, err := s.ChannelMessageSend(m.ChannelID, links[0]+"\n"+links[1]+"\n"+links[2])
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else if m.Content == tags[8] {
+		var taggies string
+		for n := 0; n < len(tags); n++ {
+			taggies += strconv.Itoa(n+1) + ") " + tags[n] + "\n "
+		}
+		_, err := s.ChannelMessageSend(m.ChannelID, "```"+taggies+"```")
+		if err != nil {
+			fmt.Println(err)
 		}
 	}
+	//}
 }
