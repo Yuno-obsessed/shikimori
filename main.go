@@ -15,13 +15,14 @@ import (
 
 // TODO: make !tags output look good,make newrite,felya,ch1h,warealdok tags, make wolves tag and gameplay
 var (
-	Token     string
-	tags      = []string{"!panda", "!anime", "!ch1h", "!felya", "!newrite", "!warealdok", "!auf", "!links", "!tags"}
-	links     = []string{"1)Полезная инфа: <https://discord.com/channels/825185921359413278/825197106460753941/1005026874977693748>", "2)Таблица: <https://docs.google.com/spreadsheets/d/1XsKJBINxQxzXa2TtUoSLqt1Kp0-03Sz2tZ65PlJY94M/edit#gid=1846372233>", "3)Видос о сборке: <https://youtu.be/g-dUqkDT6wQ>"}
-	warealdok = []string{"warealdok_1.png", "warealdok_2.png", "warealdok_3.png", "warealdok_4.png", "warealdok_5.png", "warealdok_6.png", "warealdok_7.png", "warealdok_8.png", "warealdok_9.png", "warealdok_10.png", "warealdok_11.png"}
-	ch1h      = []string{"ch1h_1.png", "ch1h_2.png", "ch1h_3.jpg"}
-	felya     = []string{"felya_1.jpg", "felya_2.jpg", "felya_3.png"}
-	newrite   = []string{"newrite_1.png", "newrite_2.png", "newrite_3.png", "newrite_4.png", "newrite_5.png", "newrite_6.png"}
+	Token string
+	tags  = []string{"!panda", "!anime", "!ответ неврита", "!ch1h", "!felya", "!newrite", "!warealdok", "bzik", "!auf", "!links", "!пепега", "!как играть?", "!ответ чиха", "!pinned", "!tags"}
+	links = []string{"1)Полезная инфа: <https://discord.com/channels/825185921359413278/825197106460753941/1005026874977693748>", "2)Таблица: <https://docs.google.com/spreadsheets/d/1XsKJBINxQxzXa2TtUoSLqt1Kp0-03Sz2tZ65PlJY94M/edit#gid=1846372233>", "3)Видос о сборке: <https://youtu.be/g-dUqkDT6wQ>"}
+	//warealdok = []string{"warealdok_1.png", "warealdok_2.png", "warealdok_3.png", "warealdok_4.png", "warealdok_5.png", "warealdok_6.png", "warealdok_7.png", "warealdok_8.png", "warealdok_9.png", "warealdok_10.png", "warealdok_11.png"}
+	bz1k    = []string{"bz1k_1.png", "bz1k_2.png"}
+	ch1h    = []string{"ch1h_1.png", "ch1h_2.png", "ch1h_3.jpg"}
+	felya   = []string{"felya_1.jpg", "felya_2.jpg", "felya_3.png"}
+	newrite = []string{"newrite_1.png", "newrite_2.png", "newrite_3.png", "newrite_4.png", "newrite_5.png"}
 )
 
 const ImageURL = "https://raw.githubusercontent.com/Yuno-obsessed/shikimori/main/images/"
@@ -65,10 +66,6 @@ func main() {
 	dg.Close()
 }
 
-type Shiki struct {
-	Name string `json: "name"`
-}
-
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	//if m.ChannelID == "827608911020163102" {
@@ -101,41 +98,72 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			fmt.Println(err)
 		}
 	} else if m.Content == tags[2] {
-		_, err = s.ChannelMessageSend(m.ChannelID, ImageURL+"/ch1h/"+ch1h[rand.Intn(len(ch1h))])
+		_, err = s.ChannelMessageSend(m.ChannelID, ImageURL+"/newrite/"+"newrite_6.png")
 		if err != nil {
 			fmt.Println(err)
 		}
 	} else if m.Content == tags[3] {
-		_, err = s.ChannelMessageSend(m.ChannelID, ImageURL+"/felya/"+felya[rand.Intn(len(felya))])
+		_, err = s.ChannelMessageSend(m.ChannelID, ImageURL+"/ch1h/"+ch1h[rand.Intn(len(ch1h))])
 		if err != nil {
 			fmt.Println(err)
 		}
 	} else if m.Content == tags[4] {
-		_, err = s.ChannelMessageSend(m.ChannelID, ImageURL+"/newrite/"+newrite[rand.Intn(len(newrite))])
+		_, err = s.ChannelMessageSend(m.ChannelID, ImageURL+"/felya/"+felya[rand.Intn(len(felya))])
 		if err != nil {
 			fmt.Println(err)
 		}
 	} else if m.Content == tags[5] {
-		_, err = s.ChannelMessageSend(m.ChannelID, ImageURL+"/warealdok/"+warealdok[rand.Intn(len(warealdok))])
+		_, err = s.ChannelMessageSend(m.ChannelID, ImageURL+"/newrite/"+newrite[rand.Intn(len(newrite))])
 		if err != nil {
 			fmt.Println(err)
 		}
+
 	} else if m.Content == tags[6] {
-		_, err = s.ChannelMessageSend(m.ChannelID, ImageURL+"auf.png")
+		_, err = s.ChannelMessageSend(m.ChannelID, "***Я милая няша, я няша-стесняша***")
 		if err != nil {
 			fmt.Println(err)
 		}
 	} else if m.Content == tags[7] {
-		_, err := s.ChannelMessageSend(m.ChannelID, links[0]+"\n"+links[1]+"\n"+links[2])
+		_, err = s.ChannelMessageSend(m.ChannelID, ImageURL+bz1k[rand.Intn(len(bz1k))])
 		if err != nil {
 			fmt.Println(err)
 		}
 	} else if m.Content == tags[8] {
+		_, err = s.ChannelMessageSend(m.ChannelID, ImageURL+"auf.png")
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else if m.Content == tags[9] {
+		_, err := s.ChannelMessageSend(m.ChannelID, links[0]+"\n"+links[1]+"\n"+links[2])
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else if m.Content == tags[10] {
+		_, err = s.ChannelMessageSend(m.ChannelID, "https://docs.google.com/spreadsheets/d/1XsKJBINxQxzXa2TtUoSLqt1Kp0-03Sz2tZ65PlJY94M/edit#gid=299200314")
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else if m.Content == tags[11] {
+		_, err = s.ChannelMessageSend(m.ChannelID, "```бандиты -> изгои -> фалмеры -> драугры -> вампиры```")
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else if m.Content == tags[12] {
+		_, err = s.ChannelMessageSend(m.ChannelID, ImageURL+"/ch1h/"+"ch1h_2.png")
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else if m.Content == tags[13] {
+		_, err = s.ChannelMessageSend(m.ChannelID, ImageURL+"pinned.png")
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else if m.Content == tags[14] {
 		var taggies string
 		for n := 0; n < len(tags); n++ {
 			taggies += strconv.Itoa(n+1) + ") " + tags[n] + "\n "
 		}
-		_, err := s.ChannelMessageSend(m.ChannelID, "```"+taggies+"```")
+		_, err := s.ChannelMessageSend(m.ChannelID, "``` "+taggies+"```")
 		if err != nil {
 			fmt.Println(err)
 		}
