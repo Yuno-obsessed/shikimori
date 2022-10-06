@@ -1,6 +1,7 @@
 package main
 
 import (
+	botInit "Shikimori/internal/init"
 	"fmt"
 	"math/rand"
 	"os"
@@ -13,7 +14,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-// TODO: make !tags output look good,make newrite,felya,ch1h,warealdok tags, make wolves tag and gameplay
 var (
 	Token string
 	tags  = []string{"!panda", "!anime", "!ответ неврита", "!ch1h", "!felya", "!newrite", "!warealdok", "bzik", "!auf", "!links", "!пепега", "!как играть?", "!ответ чиха", "!pinned", "!tags"}
@@ -27,17 +27,10 @@ var (
 
 const ImageURL = "https://raw.githubusercontent.com/Yuno-obsessed/shikimori/main/images/"
 
-func init() {
-	file, err := os.ReadFile("token.txt")
-	Token = string(file)
-	if err != nil {
-		fmt.Println(err)
-	}
-}
 func main() {
 
 	// Create a new Discord session using the provided bot token.
-	dg, err := discordgo.New("Bot " + Token)
+	dg, err := discordgo.New("Bot " + botInit.ReadBotToken())
 	if err != nil {
 		fmt.Println("error creating Discord session,", err)
 		return
@@ -129,7 +122,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			fmt.Println(err)
 		}
 	} else if m.Content == tags[8] {
-		_, err = s.ChannelMessageSend(m.ChannelID, ImageURL+"auf.png")
+		_, err = s.ChannelMessageSend(m.ChannelID, ImageURL+"/auf.png")
 		if err != nil {
 			fmt.Println(err)
 		}
