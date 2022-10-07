@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func nice_advice() string {
+func NiceAdvice() string {
 	resp, err := http.Get("http://fucking-great-advice.ru/api/random")
 	if err != nil {
 		fmt.Println("No response")
