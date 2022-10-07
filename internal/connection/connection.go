@@ -9,6 +9,7 @@ import (
 
 type BotConnection discordgo.Session
 
+// Function that sets connection settings for bot manually
 func ConnectionSettings() *BotConnection {
 	settings := &BotConnection{
 		ShouldReconnectOnError: true,

@@ -1,9 +1,15 @@
 # Shikimori
 Shikimori is a Discord bot that provides various responses on messages and can help managing channels. More functions and features are in production.
-<img align = "center" src="https://raw.githubusercontent.com/Yuno-obsessed/shikimori/main/images/Shikimori-icon.jpg" alt="Shikimori icon">
+
+<img align = "center" src="https://raw.githubusercontent.com/Yuno-obsessed/shikimori/main/assets/images/random/Shikimori-icon.jpg" alt="Shikimori icon">
 
 ### TODO
-- [] Ranking system
-- [] Random advice from
-- [] Tag !problem solving
+- [ ] Ranking system
+- [ ] Random advice from [here](http://fucking-great-advice.ru/)
+- [ ] Tag !problem solving
+- [ ] Add a function remind using goroutines
+- [ ] Add bot info function
+- [ ] Add guild info function
+- [ ] Add user info function
+- [ ] Add love command
 - [x] Refactor code

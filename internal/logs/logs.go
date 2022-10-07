@@ -2,6 +2,10 @@
 // to keep bot working the right way and to keep track of messages
 package logs
 
-func LogProviding() {
+import (
+	"log"
+)
 
+func LogProviding(message string) {
+	log.Println(message)
 }

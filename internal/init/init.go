@@ -1,17 +1,20 @@
 // Init package is responsible for initializing and making bot accessible
-package init
+package inits
 
 import (
 	"embed"
+	"fmt"
 	"log"
+	"os"
+	"os/signal"
 
-	"github.com/bwmarrin/discordgo"
+	ds "github.com/bwmarrin/discordgo"
 )
 
 //go:embed token.txt
 var tokenTxt embed.FS
 
-// This function will return the bot's token from token.txt file as a string
+// Fnction that returns bot's token from token.txt file as a string
 func ReadBotToken() string {
 	tokenInBytes, err := tokenTxt.ReadFile("token.txt")
 	if err != nil {
@@ -21,17 +24,32 @@ func ReadBotToken() string {
 	return token
 }
 
-func InitializeBot(token string) *discordgo.Session {
-	dg, err := discordgo.New("BOT" + token)
+// Function that takes token value and creates a new discord session
+func InitializeBot(token string) *ds.Session {
+	discordSession, err := ds.New("Bot" + token)
+	discordSession.AddHandler(func(session *ds.Session, r *ds.Ready) {
+		fmt.Println("Shikimori is ready for her job.")
+	})
 	if err != nil {
 		log.Println(err)
 	}
-	return dg
+	return discordSession
 }
 
-func StartBot(discordSession *discordgo.Session) {
+// Function that takes session and starts it
+func StartBot(discordSession *ds.Session) {
 	err := discordSession.Open()
 	if err != nil {
 		log.Println(err)
 	}
+	defer discordSession.Close()
+
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt)
+	<-stop
+	log.Println("Graceful shutdown")
+}
+
+func Init() {
+	StartBot(InitializeBot(ReadBotToken()))
 }
