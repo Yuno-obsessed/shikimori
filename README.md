@@ -1,5 +1,10 @@
 # Shikimori
-Shikimori is a Discord bot that provides various responses on messages and can help managing channels. More functions and features are in production.
+a Discord bot
+
+- Provides various message responses
+-  Manages Discord Channels Automatically
+
+And even more features are in the works!
 
 <img align = "center" src="https://raw.githubusercontent.com/Yuno-obsessed/shikimori/main/assets/images/random/Shikimori-icon.jpg" alt="Shikimori icon">
 
