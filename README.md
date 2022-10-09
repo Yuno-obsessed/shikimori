@@ -2,9 +2,9 @@
 a Discord bot
 
 - Provides various message responses
--  Manages Discord Channels Automatically
+- Manages Discord Channels Automatically
 
-And even more features are in the works!
+### And even more features are in the works!
 
 <img align = "center" src="https://raw.githubusercontent.com/Yuno-obsessed/shikimori/main/assets/images/random/Shikimori-icon.jpg" alt="Shikimori icon">
 
