@@ -1,4 +1,4 @@
-module Shikimori
+module github.com/yuno-obsessed/shikimori
 
 go 1.18
 
