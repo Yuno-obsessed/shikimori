@@ -6,7 +6,6 @@ import (
 	ds "github.com/bwmarrin/discordgo"
 )
 
-
 // Idk
 func checkGuild(session *ds.Session, serverID string) {
 

@@ -2,11 +2,11 @@
 package database
 
 import (
-	"Shikimori/internal/guilds"
 	"fmt"
 	"log"
 
 	ds "github.com/bwmarrin/discordgo"
+	"github.com/yuno-obsessed/shikimori/internal/guilds"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )

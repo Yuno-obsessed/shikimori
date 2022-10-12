@@ -9,12 +9,13 @@ import (
 	"os/signal"
 
 	ds "github.com/bwmarrin/discordgo"
+	"github.com/yuno-obsessed/shikimori/internal/messages"
 )
 
 //go:embed token.txt
 var tokenTxt embed.FS
 
-// Fnction that returns bot's token from token.txt file as a string
+// Function that returns bot's token from token.txt file as a string
 func ReadBotToken() string {
 	tokenInBytes, err := tokenTxt.ReadFile("token.txt")
 	if err != nil {
@@ -26,10 +27,14 @@ func ReadBotToken() string {
 
 // Function that takes token value and creates a new discord session
 func InitializeBot(token string) *ds.Session {
-	discordSession, err := ds.New("Bot" + token)
+	discordSession, err := ds.New("Bot " + token)
 	discordSession.AddHandler(func(session *ds.Session, r *ds.Ready) {
 		fmt.Println("Shikimori is ready for her job.")
 	})
+	discordSession.AddHandler(func(session *ds.Session, message *ds.MessageCreate) {
+		messages.MessageCreate(session, message)
+	})
+	discordSession.Identify.Intents = ds.IntentsGuildMessages
 	if err != nil {
 		log.Println(err)
 	}
@@ -52,4 +57,5 @@ func StartBot(discordSession *ds.Session) {
 
 func Init() {
 	StartBot(InitializeBot(ReadBotToken()))
+
 }
