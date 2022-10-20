@@ -10,7 +10,7 @@ a Discord bot
 
 ### TODO
 - [ ] Ranking system
-- [ ] Random advice from [here](http://fucking-great-advice.ru/)
+- [x] Random advice from [here](http://fucking-great-advice.ru/)
 - [ ] Tag !problem solving
 - [ ] Add a function remind using goroutines
 - [ ] Add bot info function

@@ -55,7 +55,17 @@ func StartBot(discordSession *ds.Session) {
 	log.Println("Graceful shutdown")
 }
 
+func BotStatus(s *ds.Session) {
+	err := s.UpdateGameStatus(0, "Waifuborn")
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
 func Init() {
-	StartBot(InitializeBot(ReadBotToken()))
+	botToken := ReadBotToken()
+	botSession := InitializeBot(botToken)
+	BotStatus(botSession)
+	StartBot(botSession)
 
 }
