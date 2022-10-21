@@ -10,7 +10,6 @@ import (
 	ds "github.com/bwmarrin/discordgo"
 	"github.com/yuno-obsessed/shikimori/internal/commands"
 	"github.com/yuno-obsessed/shikimori/internal/functions"
-	"github.com/yuno-obsessed/shikimori/internal/logs"
 )
 
 func MessageCreate(s *ds.Session, m *ds.MessageCreate) {
@@ -26,7 +25,7 @@ func MessageCreate(s *ds.Session, m *ds.MessageCreate) {
 
 	// Logging messages to standard output
 	if m.ChannelID == "825200883087573003" {
-		logs.LogProviding(m.Message.Author.Username + " глаголит истину: " + m.Message.Content)
+		log.Println(m.Message.Author.Username + " глаголит истину: " + m.Message.Content)
 	}
 
 	// randomize output
@@ -47,7 +46,6 @@ func MessageCreate(s *ds.Session, m *ds.MessageCreate) {
 	if strings.Contains(m.Content, commands.Commands[2]) && commands.CountWords(m.Content) < 3 {
 		av := m.Member.Avatar
 		_, err := s.ChannelMessageSendReply(m.ChannelID, av, m.Reference())
-		//InsertAvatar(av)
 		if err != nil {
 			log.Println(err)
 		}

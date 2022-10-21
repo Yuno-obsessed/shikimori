@@ -2,7 +2,9 @@ package commands
 
 import (
 	"log"
+	"math/rand"
 	"regexp"
+	"time"
 )
 
 var Commands []string = []string{
@@ -11,6 +13,16 @@ var Commands []string = []string{
 	"/avatar",
 	"/info",
 	"/tagadd",
+}
+
+type LoveInfo struct {
+	sender   string
+	receiver string
+	timeout  bool
+}
+
+func (l *LoveInfo) CheckIf(is bool) {
+
 }
 
 // To invoke a function:
@@ -38,4 +50,11 @@ func ListTags() string {
 	}
 	result += "```"
 	return result
+}
+func LoveIndicator(sender string, receiver string) int {
+	timer := time.NewTimer(time.Hour * 24)
+
+	<-timer.C
+	love := rand.Intn(101)
+	return love
 }
