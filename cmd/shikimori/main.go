@@ -5,9 +5,7 @@ import (
 )
 
 func main() {
-
 	token := inits.ReadBotToken()
 	session := inits.InitializeBot(token)
 	inits.StartBot(session)
-
 }

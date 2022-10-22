@@ -8,11 +8,11 @@ import (
 )
 
 var Commands []string = []string{
-	"/tags",
-	"/advice",
-	"/avatar",
-	"/info",
-	"/tagadd",
+	"!tags",
+	"!advice",
+	"!avatar",
+	"!info",
+	"!tagadd",
 }
 
 type LoveInfo struct {
@@ -46,7 +46,7 @@ func CountWords(str string) int {
 func ListTags() string {
 	result := "```"
 	for _, val := range Commands {
-		result += (val + "\n")
+		result += ("> " + val + "\n")
 	}
 	result += "```"
 	return result

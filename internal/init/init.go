@@ -34,6 +34,7 @@ func InitializeBot(token string) *ds.Session {
 	discordSession.AddHandler(func(session *ds.Session, message *ds.MessageCreate) {
 		messages.MessageCreate(session, message)
 	})
+
 	discordSession.Identify.Intents = ds.IntentsGuildMessages
 	if err != nil {
 		log.Println(err)
@@ -56,7 +57,7 @@ func StartBot(discordSession *ds.Session) {
 }
 
 func BotStatus(s *ds.Session) {
-	err := s.UpdateGameStatus(0, "Waifuborn")
+	err := s.UpdateGameStatus(0, "You probably are aware of who I am")
 	if err != nil {
 		fmt.Println(err)
 	}
