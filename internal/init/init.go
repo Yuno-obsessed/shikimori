@@ -9,6 +9,7 @@ import (
 	"os/signal"
 
 	ds "github.com/bwmarrin/discordgo"
+	"github.com/yuno-obsessed/shikimori/internal/logs"
 	"github.com/yuno-obsessed/shikimori/internal/messages"
 )
 
@@ -46,7 +47,7 @@ func InitializeBot(token string) *ds.Session {
 func StartBot(discordSession *ds.Session) {
 	err := discordSession.Open()
 	if err != nil {
-		log.Println(err)
+		logs.LogErr(logs.ErrSessionOpening, "")
 	}
 	defer discordSession.Close()
 
@@ -59,7 +60,7 @@ func StartBot(discordSession *ds.Session) {
 func BotStatus(s *ds.Session) {
 	err := s.UpdateGameStatus(0, "You probably are aware of who I am")
 	if err != nil {
-		fmt.Println(err)
+		logs.LogErr(logs.ErrStatusUpdate, "https://github.com/Yuno-obsessed/shikimori/blob/main/internal/init/init.go#L63")
 	}
 }
 
@@ -68,5 +69,4 @@ func Init() {
 	botSession := InitializeBot(botToken)
 	BotStatus(botSession)
 	StartBot(botSession)
-
 }

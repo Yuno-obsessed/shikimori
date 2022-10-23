@@ -4,23 +4,29 @@ package logs
 
 import (
 	"encoding/json"
-	"errors"
 	"log"
 	"os"
 	"time"
 )
 
+type BotError string
+
 var (
-	ErrWrongCommand         = errors.New("Wrong command syntax")
-	ErrInvalidUser          = errors.New("The user isn't in database yet")
-	ErrUnableToSendMessage  = errors.New("Inability to send a message")
-	ErrNotEnoughPermissions = errors.New("Not enough permission to perform an action")
-	ErrFuncUnavailable      = errors.New("Function is not implemented yet")
+	ErrWrongCommand          BotError = "Wrong command syntax"
+	ErrInvalidUser           BotError = "The user isn't in database yet"
+	ErrUnableToSendMessage   BotError = "Inability to send a message"
+	ErrNotEnoughPermissions  BotError = "Not enough permission to perform an action"
+	ErrFuncUnavailable       BotError = "Function is not implemented yet"
+	ErrSendingImage          BotError = "Image can not be send"
+	ErrStatusUpdate          BotError = "Status can not be updated"
+	ErrSessionOpening        BotError = "Session can not be opened"
+	ErrYetAnotherStupidError BotError = "How the heck did that break"
+	ErrTooMuchFlags          BotError = "Too much flags specified to the command"
 )
 
-type errLogs struct {
-	Err   error     `json:"error"`
-	Msg   string    `json:"msg"`
+type ErrLogs struct {
+	Err   BotError  `json:"error"`
+	Msg   string    `json:"msg,omitempty"`
 	Ltime time.Time `json:"time"`
 }
 
@@ -55,13 +61,13 @@ func Log(msgs string, v ...any) {
 	}
 }
 
-func LogErr(errortype error, msgs string, v ...any) {
+func LogErr(errortype BotError, msgs string, v ...any) {
 	errf, err := os.OpenFile("errlogs.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		log.Println(err)
 	}
 	defer errf.Close()
-	loggingErrors := errLogs{
+	loggingErrors := ErrLogs{
 		Err:   errortype,
 		Msg:   msgs,
 		Ltime: time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), time.Now().Hour(), time.Now().Minute(), time.Now().Second(), 0, time.UTC),
