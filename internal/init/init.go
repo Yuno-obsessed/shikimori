@@ -8,7 +8,9 @@ import (
 	"os"
 	"os/signal"
 
+	"github.com/FedorLap2006/disgolf"
 	ds "github.com/bwmarrin/discordgo"
+	"github.com/yuno-obsessed/shikimori/internal/commands"
 	"github.com/yuno-obsessed/shikimori/internal/logs"
 	"github.com/yuno-obsessed/shikimori/internal/messages"
 )
@@ -27,11 +29,19 @@ func ReadBotToken() string {
 }
 
 // Function that takes token value and creates a new discord session
-func InitializeBot(token string) *ds.Session {
-	discordSession, err := ds.New("Bot " + token)
+func InitializeBot(token string) *disgolf.Bot {
+	discordSession, err := disgolf.New(token)
+	// Here we add our commands(create a function to wrap all commands in
+	// one to be able to easily pass it from commands to init package)
+	commands.Avatar(discordSession)
 	discordSession.AddHandler(func(session *ds.Session, r *ds.Ready) {
-		fmt.Println("Shikimori is ready for her job.")
+		log.Println("Shikimori is ready for her job.")
 	})
+	discordSession.AddHandler(discordSession.Router.HandleInteraction)
+	discordSession.AddHandler(discordSession.Router.MakeMessageHandler(&disgolf.MessageHandlerConfig{
+		Prefixes:      []string{"d.", "dis.", "disgolf."},
+		MentionPrefix: true,
+	}))
 	discordSession.AddHandler(func(session *ds.Session, message *ds.MessageCreate) {
 		messages.MessageCreate(session, message)
 	})
@@ -44,29 +54,26 @@ func InitializeBot(token string) *ds.Session {
 }
 
 // Function that takes session and starts it
-func StartBot(discordSession *ds.Session) {
+func StartBot(discordSession *disgolf.Bot) {
 	err := discordSession.Open()
 	if err != nil {
 		logs.LogErr(logs.ErrSessionOpening, "")
 	}
 	defer discordSession.Close()
-
+	err = discordSession.Router.Sync(discordSession.Session, "", "1000850818406293526")
+	if err != nil {
+		log.Fatal(fmt.Errorf("cannot publish commands: %w", err))
+	}
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 	<-stop
 	log.Println("Graceful shutdown")
 }
 
-func BotStatus(s *ds.Session) {
-	err := s.UpdateGameStatus(0, "You probably are aware of who I am")
-	if err != nil {
-		logs.LogErr(logs.ErrStatusUpdate, "https://github.com/Yuno-obsessed/shikimori/blob/main/internal/init/init.go#L63")
-	}
-}
-
 func Init() {
 	botToken := ReadBotToken()
 	botSession := InitializeBot(botToken)
-	BotStatus(botSession)
+
 	StartBot(botSession)
+
 }

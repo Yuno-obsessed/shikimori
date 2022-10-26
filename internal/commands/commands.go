@@ -60,11 +60,11 @@ func InsertAvatar(m *ds.MessageCreate) string {
 	switch CountWords(m.Content) {
 	case 1:
 		imageURL = "https://cdn.discordapp.com/avatars/" + m.Author.ID + "/" + m.Author.Avatar + ".png?size=1024"
-
+		break
 	case 2:
 		l := m.Mentions[0]
 		imageURL = "https://cdn.discordapp.com/avatars/" + l.ID + "/" + l.Avatar + ".png?size=1024"
-
+		break
 	default:
 		l := m.Mentions[0]
 		imageURL = "https://cdn.discordapp.com/avatars/" + l.ID + "/" + l.Avatar + ".png?size=1024"
@@ -72,6 +72,34 @@ func InsertAvatar(m *ds.MessageCreate) string {
 	}
 	return imageURL
 }
+
+// func GetInfo(m *ds.MessageCreate) string {
+// 	var response string
+// 	switch CountWords(m.Content) {
+// 	//	case 1:
+// 	//	response = "> *Specify an object you want to get info about: \n- !info guild\n- !info user\n- !info bot"
+// 	//}
+// 	//	break;
+// 	case 2:
+// 		switch m.Content[6:] {
+// 		case "guild":
+// 			response := GetGuildInfo()
+// 			break
+// 		case "user":
+// 			response := "> Specify the user you want to get info about\n"
+// 			break
+// 		case "bot":
+// 			response := GetBotInfo()
+// 			break
+// 		}
+// 	case 3:
+// 		if m.Mentions != nil && m.Content[6:10] == "user" {
+// 			user := m.Mentions[0]
+// 			response := GetUserInfo(user.ID)
+// 		}
+// 	}
+// 	return response
+// }
 
 func CountWords(str string) int {
 	re := regexp.MustCompile(`[\S]+`)

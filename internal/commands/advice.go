@@ -1,9 +1,9 @@
-package functions
+package commands
 
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
@@ -13,7 +13,7 @@ func NiceAdvice() string {
 		fmt.Println("No response")
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 
 	type response struct {
 		Id    int    `json:"id"`

@@ -6,7 +6,6 @@ import (
 	"log"
 
 	ds "github.com/bwmarrin/discordgo"
-	"github.com/yuno-obsessed/shikimori/internal/guilds"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -20,21 +19,6 @@ func MongoConnect() {
 		log.Println(err)
 	}
 	fmt.Println(client)
-}
-
-// TODO: Make a function to output guild struct values
-// when bot is running at the server(to copy the output)
-
-// Function that checks if the server is in a database
-func CheckServerIs(session *ds.Session, message *ds.Message) bool {
-	server := guilds.DefineGuild(session, message)
-	// Add a new function to check if this server exists in database
-	serverIs := true
-	if server == nil {
-		serverIs = false
-		AddNewServer(server)
-	}
-	return serverIs
 }
 
 // Function that takes structure with server info

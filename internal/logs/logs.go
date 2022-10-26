@@ -22,6 +22,8 @@ var (
 	ErrSessionOpening        BotError = "Session can not be opened"
 	ErrYetAnotherStupidError BotError = "How the heck did that break"
 	ErrTooMuchFlags          BotError = "Too much flags specified to the command"
+	ErrInvalidCommandUsage   BotError = "The command wasn't used in a proper way"
+	ErrPublishingCommands    BotError = "Can not publish commands"
 )
 
 type ErrLogs struct {
