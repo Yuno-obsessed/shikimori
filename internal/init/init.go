@@ -12,7 +12,6 @@ import (
 	ds "github.com/bwmarrin/discordgo"
 	"github.com/yuno-obsessed/shikimori/internal/commands"
 	"github.com/yuno-obsessed/shikimori/internal/logs"
-	"github.com/yuno-obsessed/shikimori/internal/messages"
 )
 
 //go:embed token.txt
@@ -33,7 +32,7 @@ func InitializeBot(token string) *disgolf.Bot {
 	discordSession, err := disgolf.New(token)
 	// Here we add our commands(create a function to wrap all commands in
 	// one to be able to easily pass it from commands to init package)
-	commands.Avatar(discordSession)
+	commands.InitializeCommands(discordSession)
 	discordSession.AddHandler(func(session *ds.Session, r *ds.Ready) {
 		log.Println("Shikimori is ready for her job.")
 	})
@@ -42,9 +41,6 @@ func InitializeBot(token string) *disgolf.Bot {
 		Prefixes:      []string{"d.", "dis.", "disgolf."},
 		MentionPrefix: true,
 	}))
-	discordSession.AddHandler(func(session *ds.Session, message *ds.MessageCreate) {
-		messages.MessageCreate(session, message)
-	})
 
 	discordSession.Identify.Intents = ds.IntentsGuildMessages
 	if err != nil {
@@ -61,6 +57,7 @@ func StartBot(discordSession *disgolf.Bot) {
 	}
 	defer discordSession.Close()
 	err = discordSession.Router.Sync(discordSession.Session, "", "1000850818406293526")
+	// err = discordSession.Router.Sync(discordSession.Session, "", "825185921359413278")
 	if err != nil {
 		log.Fatal(fmt.Errorf("cannot publish commands: %w", err))
 	}
