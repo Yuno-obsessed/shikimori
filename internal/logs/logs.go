@@ -13,7 +13,7 @@ type BotError string
 
 var (
 	ErrWrongCommand          BotError = "Wrong command syntax"
-	ErrInvalidUser           BotError = "The user isn't in database yet"
+	ErrUserNotExist          BotError = "There is no such user"
 	ErrUnableToSendMessage   BotError = "Inability to send a message"
 	ErrNotEnoughPermissions  BotError = "Not enough permission to perform an action"
 	ErrFuncUnavailable       BotError = "Function is not implemented yet"
@@ -24,6 +24,7 @@ var (
 	ErrTooMuchFlags          BotError = "Too much flags specified to the command"
 	ErrInvalidCommandUsage   BotError = "The command wasn't used in a proper way"
 	ErrPublishingCommands    BotError = "Can not publish commands"
+	ErrUnmarshalingJSON      BotError = "Can not unmarshal Json"
 )
 
 type ErrLogs struct {

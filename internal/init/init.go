@@ -12,6 +12,7 @@ import (
 	ds "github.com/bwmarrin/discordgo"
 	"github.com/yuno-obsessed/shikimori/internal/commands"
 	"github.com/yuno-obsessed/shikimori/internal/logs"
+	"github.com/yuno-obsessed/shikimori/internal/messages"
 )
 
 //go:embed token.txt
@@ -30,8 +31,14 @@ func ReadBotToken() string {
 // Function that takes token value and creates a new discord session
 func InitializeBot(token string) *disgolf.Bot {
 	discordSession, err := disgolf.New(token)
+	if err != nil {
+		logs.LogErr(logs.ErrSessionOpening, "InitializeBot")
+	}
 	// Here we add our commands(create a function to wrap all commands in
 	// one to be able to easily pass it from commands to init package)
+	discordSession.AddHandler(func(session *ds.Session, message *ds.MessageCreate) {
+		messages.MessageCreate(session, message)
+	})
 	commands.InitializeCommands(discordSession)
 	discordSession.AddHandler(func(session *ds.Session, r *ds.Ready) {
 		log.Println("Shikimori is ready for her job.")
@@ -41,8 +48,13 @@ func InitializeBot(token string) *disgolf.Bot {
 		Prefixes:      []string{"d.", "dis.", "disgolf."},
 		MentionPrefix: true,
 	}))
-
 	discordSession.Identify.Intents = ds.IntentsGuildMessages
+	discordSession.Identify.Intents |= ds.IntentMessageContent
+	discordSession.Identify.Intents |= ds.IntentGuildPresences
+	// discordSession.Identify.Intents |= ds.IntentGuildIntegrations
+	err = discordSession.Router.Sync(discordSession.Session, "1000845128317022249", "1000850818406293526")
+	err = discordSession.Router.Sync(discordSession.Session, "1000845128317022249", "825185921359413278")
+
 	if err != nil {
 		log.Println(err)
 	}
@@ -55,9 +67,8 @@ func StartBot(discordSession *disgolf.Bot) {
 	if err != nil {
 		logs.LogErr(logs.ErrSessionOpening, "")
 	}
+	discordSession.UpdateGameStatus(0, "Waifuborn")
 	defer discordSession.Close()
-	err = discordSession.Router.Sync(discordSession.Session, "", "1000850818406293526")
-	// err = discordSession.Router.Sync(discordSession.Session, "", "825185921359413278")
 	if err != nil {
 		log.Fatal(fmt.Errorf("cannot publish commands: %w", err))
 	}

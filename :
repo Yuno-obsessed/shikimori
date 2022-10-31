@@ -8,17 +8,6 @@ import (
 	"github.com/yuno-obsessed/shikimori/internal/logs"
 )
 
-func PresenceInfo(session *disgolf.Bot, ctx *disgolf.Ctx) string {
-	presence, err := ctx.State.Presence(getGuildStructure(session, ctx).ID, ctx.Interaction.Member.User.ID)
-	if err != nil {
-		fmt.Println(err)
-	}
-	userPresence := string(presence.Status)
-	if userPresence == "" {
-		return "yESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSss"
-	}
-	return userPresence
-}
 func getGuildStructure(session *disgolf.Bot, ctx *disgolf.Ctx) *discordgo.Guild {
 	guild, _ := session.Guild(ctx.Interaction.GuildID)
 	return guild
@@ -133,25 +122,18 @@ func InfoCommand(session *disgolf.Bot) {
 											Inline: true,
 										},
 										{
-											Name:   "Nickname: ",
-											Value:  nickname,
+											Name:  "Nickname",
+											Value: nickname,
 											Inline: true,
 										},
 										{
-											Name:   "Joined at: ",
-											Value:  ctx.Interaction.Member.JoinedAt.Format("02 Jan 2006 15:04:05"),
-											Inline: false,
+Name: "Date of joining guild",
+											Value: ctx.Interaction.Member.JoinedAt.Format(),
 										},
-
-										{
-											Name:   "Status: ",
-											Value:  PresenceInfo(session, ctx),
-											Inline: true,
-										},
-										// 										{
-										// Name: "Joined discord",
-										// 											Value: ctx.,
-										// 										},
+										// {
+										// 	Name: "Status: ",
+										// 	Value: ctx.Interaction.Member.User.,
+										// },
 									},
 								},
 							},

@@ -7,4 +7,6 @@ import (
 func InitializeCommands(session *disgolf.Bot) {
 	AvatarCommand(session)
 	AdviceCommand(session)
+	InfoCommand(session)
+	WeatherCommand(session)
 }
