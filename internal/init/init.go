@@ -48,10 +48,13 @@ func InitializeBot(token string) *disgolf.Bot {
 		Prefixes:      []string{"d.", "dis.", "disgolf."},
 		MentionPrefix: true,
 	}))
-	discordSession.Identify.Intents = ds.IntentsGuildMessages
-	discordSession.Identify.Intents |= ds.IntentMessageContent
-	discordSession.Identify.Intents |= ds.IntentGuildPresences
+	discordSession.StateEnabled = true
+	// discordSession.Identify.Intents = ds.IntentsGuildMessages
+	// discordSession.Identify.Intents |= ds.IntentGuildMembers
+	// discordSession.Identify.Intents |= ds.IntentMessageContent
+	// discordSession.Identify.Intents |= ds.IntentGuildPresences
 	// discordSession.Identify.Intents |= ds.IntentGuildIntegrations
+	discordSession.Identify.Intents = ds.IntentsAll
 	err = discordSession.Router.Sync(discordSession.Session, "1000845128317022249", "1000850818406293526")
 	err = discordSession.Router.Sync(discordSession.Session, "1000845128317022249", "825185921359413278")
 
@@ -67,6 +70,7 @@ func StartBot(discordSession *disgolf.Bot) {
 	if err != nil {
 		logs.LogErr(logs.ErrSessionOpening, "")
 	}
+
 	discordSession.UpdateGameStatus(0, "Waifuborn")
 	defer discordSession.Close()
 	if err != nil {

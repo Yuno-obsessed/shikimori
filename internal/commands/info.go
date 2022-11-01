@@ -9,13 +9,30 @@ import (
 )
 
 func PresenceInfo(session *disgolf.Bot, ctx *disgolf.Ctx) string {
-	presence, err := ctx.State.Presence(getGuildStructure(session, ctx).ID, ctx.Interaction.Member.User.ID)
+	pr, err := session.State.Presence(ctx.Interaction.GuildID, ctx.Interaction.Member.User.ID)
 	if err != nil {
 		fmt.Println(err)
 	}
-	userPresence := string(presence.Status)
-	if userPresence == "" {
-		return "yESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSss"
+	presence := string(pr.Status)
+	var userPresence string
+	switch presence {
+	case "dnd":
+		userPresence = ":red_circle: Do not disturb"
+		break
+	case "idle":
+		userPresence = ":yellow_circle: Idle"
+		break
+	// case "offline":
+	// 	userPresence = ":white_circle: Offline"
+	// 	break
+	// case "invisible":
+	// 	userPresence = ":white_circle: Invisible"
+	// 	break
+	case "online":
+		userPresence = ":green_circle: Online"
+		break
+	default:
+		userPresence = ":white_circle: Offline"
 	}
 	return userPresence
 }
@@ -110,53 +127,59 @@ func InfoCommand(session *disgolf.Bot) {
 				Type: discordgo.ChatApplicationCommand,
 				Handler: disgolf.HandlerFunc(func(ctx *disgolf.Ctx) {
 					userStruct := ctx.Interaction.ApplicationCommandData().Options[0].Options[0].UserValue(ctx.Session)
-					nickname := userStruct.Username
-					if ctx.Interaction.Member.Nick != "" {
-						nickname = ctx.Interaction.Member.Nick
+					var nickname string
+					memberStruct, _ := session.GuildMember(ctx.Interaction.GuildID, userStruct.ID)
+					if memberStruct.Nick != "" {
+						nickname = memberStruct.Nick
+					} else {
+						nickname = userStruct.Username
 					}
-					_ = ctx.Respond(&discordgo.InteractionResponse{
-						Type: discordgo.InteractionResponseChannelMessageWithSource,
-						Data: &discordgo.InteractionResponseData{
-							Embeds: []*discordgo.MessageEmbed{
-								{
-									Title: "Info about " + userStruct.Username,
-									Color: 0xcd0101,
-									Type:  discordgo.EmbedTypeRich,
-									Thumbnail: &discordgo.MessageEmbedThumbnail{
-										URL: "https://cdn.discordapp.com/avatars/" + userStruct.ID + "/" + userStruct.Avatar + ".png?size=1024",
-									},
-
-									Fields: []*discordgo.MessageEmbedField{
-										{
-											Name:   "Username: ",
-											Value:  userStruct.Username,
-											Inline: true,
-										},
-										{
-											Name:   "Nickname: ",
-											Value:  nickname,
-											Inline: true,
-										},
-										{
-											Name:   "Joined at: ",
-											Value:  ctx.Interaction.Member.JoinedAt.Format("02 Jan 2006 15:04:05"),
-											Inline: false,
+					if nickname != "" {
+						fmt.Println(PresenceInfo(session, ctx))
+						_ = ctx.Respond(&discordgo.InteractionResponse{
+							Type: discordgo.InteractionResponseChannelMessageWithSource,
+							Data: &discordgo.InteractionResponseData{
+								Embeds: []*discordgo.MessageEmbed{
+									{
+										Title: "Info about " + userStruct.Username,
+										Color: 0xcd0101,
+										Type:  discordgo.EmbedTypeRich,
+										Thumbnail: &discordgo.MessageEmbedThumbnail{
+											URL: "https://cdn.discordapp.com/avatars/" + userStruct.ID + "/" + userStruct.Avatar + ".png?size=1024",
 										},
 
-										{
-											Name:   "Status: ",
-											Value:  PresenceInfo(session, ctx),
-											Inline: true,
+										Fields: []*discordgo.MessageEmbedField{
+											{
+												Name:   "Username: ",
+												Value:  userStruct.Username,
+												Inline: true,
+											},
+											{
+												Name:   "Nickname: ",
+												Value:  nickname,
+												Inline: true,
+											},
+											{
+												Name:   "Joined at: ",
+												Value:  ctx.Interaction.Member.JoinedAt.Format("02 Jan 2006 15:04:05"),
+												Inline: false,
+											},
+
+											{
+												Name:   "Status: ",
+												Value:  PresenceInfo(session, ctx),
+												Inline: true,
+											},
+											// 										{
+											// Name: "Joined discord",
+											// 											Value: ctx.,
+											// 										},
 										},
-										// 										{
-										// Name: "Joined discord",
-										// 											Value: ctx.,
-										// 										},
 									},
 								},
 							},
-						},
-					})
+						})
+					}
 				}),
 				MessageMiddlewares: []disgolf.MessageHandler{
 					disgolf.MessageHandlerFunc(func(ctx *disgolf.MessageCtx) {

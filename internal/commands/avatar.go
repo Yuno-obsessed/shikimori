@@ -21,21 +21,25 @@ func AvatarCommand(session *disgolf.Bot) {
 		},
 		Type: discordgo.ChatApplicationCommand,
 		Handler: disgolf.HandlerFunc(func(ctx *disgolf.Ctx) {
-			if ctx.Interaction.ApplicationCommandData().Options == nil {
-				_ = ctx.Respond(&discordgo.InteractionResponse{
-					Type: discordgo.InteractionResponseChannelMessageWithSource,
-					Data: &discordgo.InteractionResponseData{
-						Content: "https://cdn.discordapp.com/avatars/" + ctx.Interaction.Member.User.ID + "/" + ctx.Interaction.Member.User.Avatar + ".png?size=1024",
-					},
-				})
-			} else {
-				_ = ctx.Respond(&discordgo.InteractionResponse{
-					Type: discordgo.InteractionResponseChannelMessageWithSource,
-					Data: &discordgo.InteractionResponseData{
-						Content: "https://cdn.discordapp.com/avatars/" + ctx.Interaction.ApplicationCommandData().Options[0].UserValue(ctx.Session).ID + "/" + ctx.Interaction.ApplicationCommandData().Options[0].UserValue(ctx.Session).Avatar + ".png?size=1024",
-					},
-				})
+			user := ctx.Interaction.Member.User
+			if ctx.Interaction.ApplicationCommandData().Options != nil {
+				user = ctx.Interaction.ApplicationCommandData().Options[0].UserValue(ctx.Session)
 			}
+			_ = ctx.Respond(&discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData{
+					Embeds: []*discordgo.MessageEmbed{
+						{
+							Color: 0x0d37d8,
+							Type:  discordgo.EmbedTypeRich,
+							Image: &discordgo.MessageEmbedImage{
+								URL: "https://cdn.discordapp.com/avatars/" + user.ID + "/" + user.Avatar + ".png?size=1024",
+							},
+						},
+					},
+				},
+			})
+
 		}),
 
 		MessageHandler: disgolf.MessageHandlerFunc(func(ctx *disgolf.MessageCtx) {
