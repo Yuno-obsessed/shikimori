@@ -40,12 +40,11 @@ func NormalAdvice() string {
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 
-	type object struct {
-		Id     string `json:"id"`
-		Advice string `json:"advice"`
-	}
 	type response struct {
-		Slip object `json:"slip"`
+		Slip struct {
+			ID     int    `json:"id,omitempty"`
+			Advice string `json:"advice,omitempty"`
+		} `json:"slip,omitempty"`
 	}
 	var data response
 	err = json.Unmarshal(body, &data)

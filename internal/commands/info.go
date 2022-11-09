@@ -2,51 +2,38 @@ package commands
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/FedorLap2006/disgolf"
 	"github.com/bwmarrin/discordgo"
-	"github.com/yuno-obsessed/shikimori/internal/logs"
 )
 
-func PresenceInfo(session *disgolf.Bot, ctx *disgolf.Ctx) string {
-	pr, err := session.State.Presence(ctx.Interaction.GuildID, ctx.Interaction.Member.User.ID)
+func PresenceInfo(session *disgolf.Bot, ctx *disgolf.Ctx, user *discordgo.User) (string, int) {
+	pr, err := session.State.Presence(ctx.Interaction.GuildID, user.ID)
+	if pr == nil {
+		return ":white_circle: Offline", 0xffffff
+	}
 	if err != nil {
 		fmt.Println(err)
 	}
+	var color int
 	presence := string(pr.Status)
 	var userPresence string
 	switch presence {
 	case "dnd":
 		userPresence = ":red_circle: Do not disturb"
+		color = 0xe60025
 		break
 	case "idle":
 		userPresence = ":yellow_circle: Idle"
+		color = 0xe6dd00
 		break
-	// case "offline":
-	// 	userPresence = ":white_circle: Offline"
-	// 	break
-	// case "invisible":
-	// 	userPresence = ":white_circle: Invisible"
-	// 	break
 	case "online":
 		userPresence = ":green_circle: Online"
+		color = 0x00b340
 		break
-	default:
-		userPresence = ":white_circle: Offline"
 	}
-	return userPresence
-}
-func getGuildStructure(session *disgolf.Bot, ctx *disgolf.Ctx) *discordgo.Guild {
-	guild, _ := session.Guild(ctx.Interaction.GuildID)
-	return guild
-}
-
-func getUserStructure(session *disgolf.Bot, ctx *disgolf.Ctx) *discordgo.User {
-	user, err := session.User(ctx.Interaction.ApplicationCommandData().Options[0].UserValue(ctx.Session).ID)
-	if err != nil {
-		logs.LogErr(logs.ErrUserNotExist, "getUserStructure")
-	}
-	return user
+	return userPresence, color
 }
 
 func InfoCommand(session *disgolf.Bot) {
@@ -72,24 +59,54 @@ func InfoCommand(session *disgolf.Bot) {
 				Name:        "guild",
 				Description: "guild info",
 				Handler: disgolf.HandlerFunc(func(ctx *disgolf.Ctx) {
+					guild, _ := session.Guild(ctx.Interaction.GuildID)
+					usernameId := guild.OwnerID
+					guildCounts, err := session.GuildWithCounts(ctx.Interaction.GuildID)
+					y := strconv.Itoa(guildCounts.ApproximatePresenceCount) + "/" + strconv.Itoa(guildCounts.ApproximateMemberCount)
+					if err != nil {
+						fmt.Println(err)
+					}
+					gtimestamp, err := discordgo.SnowflakeTimestamp(ctx.Interaction.GuildID)
+					username, err := ctx.User(usernameId)
+					// if err != nil {
+					// 	fmt.Println(err)
+					// }
 					_ = ctx.Respond(&discordgo.InteractionResponse{
 						Type: discordgo.InteractionResponseChannelMessageWithSource,
 						Data: &discordgo.InteractionResponseData{
 							Embeds: []*discordgo.MessageEmbed{
 								{
 									Color: 0xb1cc00,
-									Title: "Guild info command",
+									Title: "Info about guild: ",
 									Type:  discordgo.EmbedTypeRich,
 									Thumbnail: &discordgo.MessageEmbedThumbnail{
-										URL: getGuildStructure(session, ctx).IconURL(),
-									},
-									Author: &discordgo.MessageEmbedAuthor{
-										Name: ctx.Interaction.Member.User.Username,
+										URL: guild.IconURL(),
 									},
 									Fields: []*discordgo.MessageEmbedField{
 										{
-											Name:  "Guild name",
-											Value: getGuildStructure(session, ctx).Name,
+											Name:   "Guild name:",
+											Value:  guild.Name,
+											Inline: true,
+										},
+										{
+											Name:   "Guild's owner: ",
+											Value:  username.Username,
+											Inline: true,
+										},
+										{
+											Name:   "Created: ",
+											Value:  gtimestamp.Format("02 Jan 2006 15:04:05"),
+											Inline: false,
+										},
+										{
+											Name:   "Current Member Count: ",
+											Value:  y,
+											Inline: true,
+										},
+										{
+											Name:   "Emoji count",
+											Value:  strconv.Itoa(len(guild.Emojis)),
+											Inline: true,
 										},
 									},
 								},
@@ -128,6 +145,11 @@ func InfoCommand(session *disgolf.Bot) {
 				Handler: disgolf.HandlerFunc(func(ctx *disgolf.Ctx) {
 					userStruct := ctx.Interaction.ApplicationCommandData().Options[0].Options[0].UserValue(ctx.Session)
 					var nickname string
+					presence, color := PresenceInfo(session, ctx, userStruct)
+					timestamp, err := discordgo.SnowflakeTimestamp(userStruct.ID)
+					if err != nil {
+						fmt.Println(err)
+					}
 					memberStruct, _ := session.GuildMember(ctx.Interaction.GuildID, userStruct.ID)
 					if memberStruct.Nick != "" {
 						nickname = memberStruct.Nick
@@ -135,14 +157,13 @@ func InfoCommand(session *disgolf.Bot) {
 						nickname = userStruct.Username
 					}
 					if nickname != "" {
-						fmt.Println(PresenceInfo(session, ctx))
 						_ = ctx.Respond(&discordgo.InteractionResponse{
 							Type: discordgo.InteractionResponseChannelMessageWithSource,
 							Data: &discordgo.InteractionResponseData{
 								Embeds: []*discordgo.MessageEmbed{
 									{
 										Title: "Info about " + userStruct.Username,
-										Color: 0xcd0101,
+										Color: color,
 										Type:  discordgo.EmbedTypeRich,
 										Thumbnail: &discordgo.MessageEmbedThumbnail{
 											URL: "https://cdn.discordapp.com/avatars/" + userStruct.ID + "/" + userStruct.Avatar + ".png?size=1024",
@@ -155,25 +176,27 @@ func InfoCommand(session *disgolf.Bot) {
 												Inline: true,
 											},
 											{
-												Name:   "Nickname: ",
+												Name:   "AKA: ",
 												Value:  nickname,
 												Inline: true,
-											},
-											{
-												Name:   "Joined at: ",
-												Value:  ctx.Interaction.Member.JoinedAt.Format("02 Jan 2006 15:04:05"),
-												Inline: false,
 											},
 
 											{
 												Name:   "Status: ",
-												Value:  PresenceInfo(session, ctx),
+												Value:  presence,
+												Inline: false,
+											},
+											{
+												Name:   "Joined server: ",
+												Value:  ctx.Interaction.Member.JoinedAt.Format("02 Jan 2006 15:04:05"),
 												Inline: true,
 											},
-											// 										{
-											// Name: "Joined discord",
-											// 											Value: ctx.,
-											// 										},
+
+											{
+												Name:   "Joined discord: ",
+												Value:  timestamp.Format("02 Jan 2006 15:04:05"),
+												Inline: true,
+											},
 										},
 									},
 								},

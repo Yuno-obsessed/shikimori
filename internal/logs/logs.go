@@ -25,6 +25,7 @@ var (
 	ErrInvalidCommandUsage   BotError = "The command wasn't used in a proper way"
 	ErrPublishingCommands    BotError = "Can not publish commands"
 	ErrUnmarshalingJSON      BotError = "Can not unmarshal Json"
+	ErrReachingAPI           BotError = "Can not get a response from API"
 )
 
 type ErrLogs struct {
