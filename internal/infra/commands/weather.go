@@ -10,7 +10,6 @@ import (
 	"github.com/FedorLap2006/disgolf"
 	"github.com/bwmarrin/discordgo"
 	"github.com/gocolly/colly"
-	"github.com/yuno-obsessed/shikimori/internal/logs"
 )
 
 type Weather struct {
@@ -77,7 +76,7 @@ func weatherInfo(city string) *Weather {
 func countryInfo(country string) string {
 	response, err := http.Get("https://countryflagapi.herokuapp.com/country/" + country)
 	if err != nil {
-		log.Println(logs.ErrReachingAPI, "countryInfo")
+		log.Println(err)
 	}
 	type CountryInfo []struct {
 		Name    string `json:"name,omitempty"`

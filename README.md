@@ -8,6 +8,9 @@ a Discord bot
 
 <img align = "center" src="https://raw.githubusercontent.com/Yuno-obsessed/shikimori/main/assets/images/random/Shikimori-icon.jpg" alt="Shikimori icon">
 
+
+![Discord Banner 3](https://discordapp.com/api/guilds/[825185921359413278]/widget.png?style=banner3)
+
 ### TODO
 - [ ] Ranking system
 - [x] Random advice from [here](http://fucking-great-advice.ru/)

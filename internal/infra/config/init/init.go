@@ -2,16 +2,16 @@ package inits
 
 import (
 	"fmt"
-	"log"
+	"github.com/yuno-obsessed/shikimori/internal/infra/chat"
+	"github.com/yuno-obsessed/shikimori/internal/infra/commands"
+	"github.com/yuno-obsessed/shikimori/internal/infra/config/logger"
+	"go.uber.org/zap"
 	"os"
 	"os/signal"
 
 	"github.com/FedorLap2006/disgolf"
 	ds "github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
-	"github.com/yuno-obsessed/shikimori/internal/commands"
-	"github.com/yuno-obsessed/shikimori/internal/logs"
-	"github.com/yuno-obsessed/shikimori/internal/messages"
 )
 
 // Reading bot token from .env
@@ -24,22 +24,21 @@ func ReadBotToken() string {
 	return token
 }
 
-type logger logs.Logger
+var log = logger.NewLogger()
 
 // Function that takes token value and creates a new discord session
 func InitializeBot(token string) *disgolf.Bot {
 	discordSession, err := disgolf.New(token)
 	if err != nil {
-		logger.Error("Error initializing a bot", err.Error())
+		log.Error("Error initializing a bot", zap.Error(err))
 	}
-	// Here we add our commands(create a function to wrap all commands in
-	// one to be able to easily pass it from commands to init package)
-	discordSession.AddHandler(func(session *ds.Session, message *ds.MessageCreate) {
-		messages.MessageCreate(session, message)
-	})
+	discordSession.AddHandler(chat.ReadMessages)
+	//discordSession.AddHandler(func(session *ds.Session, message *ds.MessageCreate) {
+	//	chat.ReadMessages(session, message)
+	//})
 	commands.InitializeCommands(discordSession)
 	discordSession.AddHandler(func(session *ds.Session, r *ds.Ready) {
-		logger.Info("Shikimori is up and running", "")
+		log.Info("Shikimori is up and running")
 	})
 	discordSession.AddHandler(discordSession.Router.HandleInteraction)
 	discordSession.AddHandler(discordSession.Router.MakeMessageHandler(&disgolf.MessageHandlerConfig{
@@ -58,7 +57,7 @@ func InitializeBot(token string) *disgolf.Bot {
 	err = discordSession.Router.Sync(discordSession.Session, "1000845128317022249", "931186431215435807")
 
 	if err != nil {
-		logger.Error(logs.ErrPublishingCommands, err.Error())
+		log.Error(logger.ErrPublishingCommands.Error(), zap.Error(err))
 	}
 	return discordSession
 }
@@ -67,18 +66,18 @@ func InitializeBot(token string) *disgolf.Bot {
 func StartBot(discordSession *disgolf.Bot) {
 	err := discordSession.Open()
 	if err != nil {
-		logger.Error(logs.ErrSessionOpening, err.Error())
+		log.Error(logger.ErrSessionOpening.Error(), zap.Error(err))
 	}
 
 	err = discordSession.UpdateGameStatus(0, "Waifuborn")
 	defer discordSession.Close()
 	if err != nil {
-		logger.Error(logs.ErrStatusUpdate, err.Error())
+		log.Error("error:", zap.Error(logger.ErrStatusUpdate))
 	}
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 	<-stop
-	log.Println("Graceful shutdown")
+	log.Info("Graceful shutdown")
 }
 
 // Function to gather all the functions that start the bot

@@ -1,0 +1,44 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5666:5666"
+    env_file:
+        - .env
+    healthcheck:
+        test: [ "CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB}", "-U", "${POSTGRES_USER}" ]
+        interval: 5s
+        timeout: 2s
+        retries: 3
+    restart: always
+    volumes:
+      - ./postgres-data/:/var/lib/postgresql/data/
+  minio:
+    image: quay.io/minio/minio:latest
+    restart: unless-stopped
+    command: server --address ":9080" --console-address ":9081" /data
+    env_file:
+      - .env
+    ports:
+      - "9080:9080"
+      - "9081:9081"
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+    volumes:
+      - /storage/minio:/data
+  migrate:
+    restart: on-failure
+    env_file:
+      - .env
+    image: migrate/migrate
+    depends_on:
+      postgres:
+        condition: service_started
+    volumes:
+      - ./internal/infra/db/migrations/:/migration
+    command:
+      [ "-path", "/migration", "-database", "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@tcp(postgres)/${POSTGRES_DB}", "up","1" ]
+volumes:
+  postgres-data:

@@ -5,9 +5,8 @@ import (
 	"context"
 	"fmt"
 	ds "github.com/bwmarrin/discordgo"
-	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/yuno-obsessed/shikimori/internal/logs"
+	"github.com/yuno-obsessed/shikimori/internal/infra/config/logger"
 	"log"
 	"os"
 )
@@ -16,13 +15,13 @@ type Server ds.Guild
 
 type Database struct {
 	Pool   *pgxpool.Pool
-	Logger logs.Logger
+	Logger logger.Logger
 }
 
 func NewDatabase() Database {
 	return Database{
 		Pool:   DbInit(),
-		Logger: logs.NewLogger(),
+		Logger: logger.NewLogger(),
 	}
 }
 
@@ -32,7 +31,7 @@ func DbDns() string {
 		os.Getenv("POSTGRES_USER"),
 		os.Getenv("POSTGRES_PASSWORD"),
 		os.Getenv("POSTGRES_PORT"),
-		os.Getenv("POSTGRES_DB")
+		os.Getenv("POSTGRES_DB"),
 	)
 }
 

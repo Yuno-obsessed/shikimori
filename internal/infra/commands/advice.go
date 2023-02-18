@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/FedorLap2006/disgolf"
 	"github.com/bwmarrin/discordgo"
-	"github.com/yuno-obsessed/shikimori/internal/logs"
 )
 
 func ChadAdvice() string {
@@ -27,7 +27,7 @@ func ChadAdvice() string {
 	var data response
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		logs.LogErr(logs.ErrUnmarshalingJSON, "ChadAdvice")
+		log.Println(err)
 	}
 	return data.Text
 }
@@ -49,7 +49,7 @@ func NormalAdvice() string {
 	var data response
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		logs.LogErr(logs.ErrUnmarshalingJSON, "NormalAdvice")
+		log.Println(err)
 	}
 	return data.Slip.Advice
 }
