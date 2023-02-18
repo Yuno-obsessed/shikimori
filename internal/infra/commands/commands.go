@@ -9,4 +9,5 @@ func InitializeCommands(session *disgolf.Bot) {
 	AdviceCommand(session)
 	InfoCommand(session)
 	WeatherCommand(session)
+	MusicCommand(session)
 }

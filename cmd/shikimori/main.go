@@ -1,7 +1,7 @@
 package main
 
 import (
-	inits "github.com/yuno-obsessed/shikimori/internal/init"
+	"github.com/yuno-obsessed/shikimori/internal/infra/config/init"
 )
 
 func main() {
